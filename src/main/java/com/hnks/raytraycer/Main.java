@@ -5,6 +5,8 @@ import com.hnks.raytraycer.material.Material;
 import com.hnks.raytraycer.material.Mirror;
 import com.hnks.raytraycer.math.Vector;
 import com.hnks.raytraycer.ray.Ray;
+import com.hnks.raytraycer.scene.camera.Camera;
+import com.hnks.raytraycer.scene.camera.PerspectiveCamera;
 import com.hnks.raytraycer.scene.geom.Plane;
 import com.hnks.raytraycer.scene.Scene;
 import com.hnks.raytraycer.scene.geom.Sphere;
@@ -51,51 +53,22 @@ public class Main {
         );
 
         BufferedImage image = new BufferedImage(400, 400, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D gfx = image.createGraphics();
 
         int sampleCount = 64;
 
-        Vector pixelSize = new Vector(
-                1.0 / image.getWidth(),
-                0,
-                1.0 / image.getHeight()
-        ).scale(1.5);
+        Camera camera = new PerspectiveCamera(
+                new Vector(0, -3, 0),
+                new Vector(0, 1, 0),
+                new Vector(0, 0, 1),
+                1,
+                image.getWidth(), image.getHeight()
+        );
 
-        Vector cameraOrigin = new Vector(0, -3, 0);
+        Raytracer raytracer = new Raytracer(scene, camera, sampleCount);
 
         for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
-
-                Vector sampleGather = new Vector(0, 0, 0);
-
-                for (int i = 0; i < sampleCount; i++) {
-                    Vector imagePlanePoint = new Vector(
-                            (((double)x / image.getWidth()) * 2 - 1),
-                            -2.1,
-                            -(((double)y / image.getHeight()) * 2 - 1)
-                    );
-                    imagePlanePoint = Vector.add(
-                            imagePlanePoint,
-                            Vector.multiply(
-                                    pixelSize,
-                                    SamplerUtil.INSTANCE.nextUnitDisplacement()
-                            )
-                    );
-
-                    Ray ray = new Ray(
-                            imagePlanePoint,
-                            Vector.sub(imagePlanePoint, cameraOrigin).normalized()
-                    );
-
-                    scene.resetRayDepth();
-                    sampleGather = Vector.add(sampleGather, scene.shade(ray));
-                }
-
-                gfx.setPaint(ColorUtil.linearVectorToColor(
-                        sampleGather.scale(1.0 / (double) sampleCount)
-                ));
-
-                gfx.fillRect(x, y, 1, 1);
+                image.setRGB(x, y, raytracer.raytrace(x, y).getRGB());
             }
         }
 

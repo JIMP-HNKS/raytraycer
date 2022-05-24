@@ -33,6 +33,14 @@ public record Vector(double x, double y, double z) {
         return v1.x() * v2.x() + v1.y() * v2.y() + v1.z() * v2.z();
     }
 
+    public static Vector cross(Vector a, Vector b) {
+        return new Vector(
+                a.y() * b.z() - a.z() * b.y(),
+                a.z() * b.x() - a.x() * b.z(),
+                a.x() * b.y() - a.y() * b.x()
+        );
+    }
+
     public static Vector multiply(Vector v1, Vector v2) {
         return new Vector(v1.x() * v2.x(), v1.y() * v2.y(), v1.z() * v2.z());
     }
