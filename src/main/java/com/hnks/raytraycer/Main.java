@@ -4,19 +4,14 @@ import com.hnks.raytraycer.material.Dielectric;
 import com.hnks.raytraycer.material.Material;
 import com.hnks.raytraycer.material.Mirror;
 import com.hnks.raytraycer.math.Vector;
-import com.hnks.raytraycer.ray.Ray;
 import com.hnks.raytraycer.scene.camera.Camera;
 import com.hnks.raytraycer.scene.camera.PerspectiveCamera;
 import com.hnks.raytraycer.scene.geom.Plane;
 import com.hnks.raytraycer.scene.Scene;
 import com.hnks.raytraycer.scene.geom.Sphere;
 import com.hnks.raytraycer.scene.light.PointLight;
-import com.hnks.raytraycer.util.ColorUtil;
-import com.hnks.raytraycer.util.SamplerUtil;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -52,28 +47,19 @@ public class Main {
                 )
         );
 
-        BufferedImage image = new BufferedImage(400, 400, BufferedImage.TYPE_INT_ARGB);
-
-        int sampleCount = 64;
-
         Camera camera = new PerspectiveCamera(
                 new Vector(0, -3, 0),
                 new Vector(0, 1, 0),
                 new Vector(0, 0, 1),
                 1,
-                image.getWidth(), image.getHeight()
+                400, 400
         );
 
-        Raytracer raytracer = new Raytracer(scene, camera, sampleCount);
-
-        for (int x = 0; x < image.getWidth(); x++) {
-            for (int y = 0; y < image.getHeight(); y++) {
-                image.setRGB(x, y, raytracer.raytrace(x, y).getRGB());
-            }
-        }
+        Raytracer raytracer = new Raytracer(scene, camera, 64, 400, 400);
+        raytracer.raytrace();
 
         try {
-            ImageIO.write(image, "png", new File("out.png"));
+            ImageIO.write(raytracer.getImage(), "png", new File("out.png"));
         } catch (IOException ignored) {}
     }
 }
