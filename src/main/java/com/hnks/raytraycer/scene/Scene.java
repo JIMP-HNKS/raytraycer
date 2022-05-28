@@ -5,11 +5,13 @@ import com.hnks.raytraycer.ray.Ray;
 import com.hnks.raytraycer.ray.RayHit;
 import com.hnks.raytraycer.scene.geom.SceneGeometry;
 import com.hnks.raytraycer.scene.light.SceneLight;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Builder @AllArgsConstructor
 public class Scene {
     private final Vector background;
 
@@ -21,12 +23,11 @@ public class Scene {
     private final int maxDepth;
     private int currentDepth = 0;
 
-    public Scene(Vector background, int maxDepth) {
+    public Scene(Vector background, List<SceneGeometry> objects, List<SceneLight> lights, int maxDepth) {
         this.background = background;
+        this.objects = objects;
+        this.lights = lights;
         this.maxDepth = maxDepth;
-
-        objects = new ArrayList<>();
-        lights = new ArrayList<>();
     }
 
     public void add(SceneGeometry ...objects) {

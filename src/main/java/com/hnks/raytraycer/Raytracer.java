@@ -5,12 +5,16 @@ import com.hnks.raytraycer.ray.Ray;
 import com.hnks.raytraycer.scene.Scene;
 import com.hnks.raytraycer.scene.camera.Camera;
 import com.hnks.raytraycer.util.ColorUtil;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+@Builder @AllArgsConstructor
 public class Raytracer {
-    private final BufferedImage image;
+    private final int width, height;
+    private BufferedImage image;
 
     private final Scene scene;
     private final Camera camera;
@@ -22,6 +26,12 @@ public class Raytracer {
         this.camera = camera;
         this.sampleCount = sampleCount;
 
+        this.width = width;
+        this.height = height;
+        createImage();
+    }
+
+    private void createImage() {
         this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     }
 
@@ -30,6 +40,10 @@ public class Raytracer {
     }
 
     public void raytrace(int x, int y) {
+        if (image == null) {
+            createImage();
+        }
+
         Vector sampleGather = new Vector(0, 0, 0);
 
         for (int i = 0; i < sampleCount; i++) {
@@ -49,7 +63,7 @@ public class Raytracer {
     public void raytrace(int left, int top, int width, int height) {
         for (int x = left; x < (left + width); x++) {
             for (int y = top; y < (top + height); y++) {
-                if (x >= image.getWidth() || y >= image.getHeight()) {
+                if (x >= width || y >= height) {
                     continue;
                 }
 
@@ -59,6 +73,6 @@ public class Raytracer {
     }
 
     public void raytrace() {
-        raytrace(0, 0, image.getWidth(), image.getHeight());
+        raytrace(0, 0, width, height);
     }
 }

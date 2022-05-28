@@ -1,0 +1,31 @@
+# Render settings
+image_size 400 400
+sample_count 1
+max_depth 8
+world_bg 1 1 1
+
+# Camera
+cam_origin 0 -3 0
+cam_eye 0 1 0
+cam_up 0 0 1
+cam_plane_distance 1
+
+# Materials
+dielectric_mat red 1 0 0
+dielectric_mat green 0 1 0
+dielectric_mat blue 0 0 1
+dielectric_mat white 1 1 1
+dielectric_mat gray 0.2 0.2 0.2
+mirror_mat mirror 0.9 0.9 0.9 0
+mirror_mat glossy 1 0.7 0.4 0.2
+
+# Geometry
+sphere 0 0 0 1 mirror
+sphere -2 -1 0 1 red
+sphere -2 3 0 1 green
+sphere 3 1 0 1 blue
+plane 0 0 -1 0 0 1 gray
+
+# Lights
+point_light 0 0 5 3 3 3 1
+point_light 5 5 5 0.3 0.3 1 3

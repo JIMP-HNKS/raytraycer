@@ -4,7 +4,9 @@ import com.hnks.raytraycer.math.Vector;
 import com.hnks.raytraycer.ray.Ray;
 import com.hnks.raytraycer.util.CameraUtil;
 import com.hnks.raytraycer.util.SamplerUtil;
+import lombok.Builder;
 
+@Builder
 public class PerspectiveCamera implements Camera {
     private final Vector origin;
     private final Vector eye;
