@@ -11,7 +11,7 @@ import lombok.Builder;
 import java.util.Collections;
 import java.util.List;
 
-@Builder @AllArgsConstructor
+@Builder
 public class Scene {
     private final Vector background;
 
@@ -21,7 +21,6 @@ public class Scene {
     private final double epsilon = 1e-3;
 
     private final int maxDepth;
-    private int currentDepth = 0;
 
     public Scene(Vector background, List<SceneGeometry> objects, List<SceneLight> lights, int maxDepth) {
         this.background = background;
@@ -46,14 +45,8 @@ public class Scene {
         return lights;
     }
 
-    public boolean isRayDepthExceeded() {
-        currentDepth += 1;
-
-        return currentDepth >= maxDepth;
-    }
-
-    public void resetRayDepth() {
-        currentDepth = 0;
+    public boolean isRayDepthExceeded(Ray ray) {
+        return ray.depth() >= maxDepth;
     }
 
     public RayHit hitTest(Ray ray, boolean hitLights) {

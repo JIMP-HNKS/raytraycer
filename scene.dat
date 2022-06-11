@@ -1,6 +1,6 @@
 # Render settings
-image_size 400 400
-sample_count 1
+image_size 2048 2048
+sample_count 16
 max_depth 8
 world_bg 1 1 1
 

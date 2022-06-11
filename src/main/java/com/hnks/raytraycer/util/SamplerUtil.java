@@ -3,25 +3,24 @@ package com.hnks.raytraycer.util;
 import com.hnks.raytraycer.math.Vector;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class SamplerUtil {
-    private final Random random;
-
-    private SamplerUtil() {
-        this.random = new Random();
-    }
-
     public Vector nextUnitDisplacement() {
+        Random random = ThreadLocalRandom.current();
+
         return new Vector(
-                this.random.nextDouble() * 2 - 1,
-                this.random.nextDouble() * 2 - 1,
+                random.nextDouble() * 2 - 1,
+                random.nextDouble() * 2 - 1,
                 0
         );
     }
 
     public Vector nextUnitVector() {
-        double angle = this.random.nextDouble() * 2 * Math.PI;
-        double z = this.random.nextDouble() * 2 - 1;
+        Random random = ThreadLocalRandom.current();
+
+        double angle = random.nextDouble() * 2 * Math.PI;
+        double z = random.nextDouble() * 2 - 1;
 
         double xy = Math.sqrt(1 - z * z);
 

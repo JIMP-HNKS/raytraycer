@@ -32,7 +32,7 @@ public class PerspectiveCamera implements Camera {
 
         Vector displacement = CameraUtil.imageCoordinatesToDisplacement(imageX, imageY, width, height);
 
-        double pixelSize = 1.0 / Math.max(imageX, imageY) * 0.6;
+        double pixelSize = 1.0 / Math.max(width, height) * 0.6;
         displacement = Vector.add(displacement, SamplerUtil.INSTANCE.nextUnitDisplacement().scale(pixelSize));
 
         Vector imagePlanePoint = Vector.add(
@@ -46,6 +46,6 @@ public class PerspectiveCamera implements Camera {
                 )
         );
 
-        return new Ray(origin, Vector.sub(imagePlanePoint, origin).normalized());
+        return new Ray(origin, Vector.sub(imagePlanePoint, origin).normalized(), 0);
     }
 }

@@ -29,7 +29,7 @@ public class PointLight implements SceneLight {
         double distance = Vector.sub(lightPosition, hit.position()).length();
         Vector direction = Vector.sub(lightPosition, hit.position()).normalized();
 
-        Ray shadowRay = new Ray(hit.position(), direction);
+        Ray shadowRay = new Ray(hit.position(), direction, 0);
         RayHit shadowHit = scene.hitTest(shadowRay);
 
         if (!shadowHit.hit() || shadowHit.distance() > distance) {

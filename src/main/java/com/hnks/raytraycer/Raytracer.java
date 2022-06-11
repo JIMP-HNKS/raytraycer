@@ -11,10 +11,12 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 @Builder
 @AllArgsConstructor
-public class Raytracer implements Runnable {
+public class Raytracer {
 
     private final int width, height;
     private volatile BufferedImage image;
@@ -24,8 +26,6 @@ public class Raytracer implements Runnable {
 
     private final int sampleCount;
 
-    private volatile Deque<int[]> dividedStack;
-
     public Raytracer(Scene scene, Camera camera, int sampleCount, int width, int height) {
         this.scene = scene;
         this.camera = camera;
@@ -33,11 +33,10 @@ public class Raytracer implements Runnable {
 
         this.width = width;
         this.height = height;
-        generateStack();
         createImage();
     }
 
-    private void createImage() {
+    public void createImage() {
         this.image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     }
 
@@ -46,16 +45,11 @@ public class Raytracer implements Runnable {
     }
 
     public void raytrace(int x, int y) {
-        if (image == null) {
-            createImage();
-        }
-
         Vector sampleGather = new Vector(0, 0, 0);
 
         for (int i = 0; i < sampleCount; i++) {
             Ray ray = camera.project(x, y);
 
-            scene.resetRayDepth();
             sampleGather = Vector.add(sampleGather, scene.shade(ray));
         }
 
@@ -63,9 +57,7 @@ public class Raytracer implements Runnable {
             sampleGather.scale(1.0 / sampleCount)
         );
 
-        synchronized (image) {
-            image.setRGB(x, y, color.getRGB());
-        }
+        image.setRGB(x, y, color.getRGB());
     }
 
     public void raytrace(int left, int top, int width, int height) {
@@ -81,30 +73,26 @@ public class Raytracer implements Runnable {
     }
 
     public void raytrace() {
-        if (dividedStack.isEmpty()) {
-            generateStack();
-        }
         raytrace(0, 0, width, height);
     }
 
-    @Override
-    public void run() {
-        while (!dividedStack.isEmpty()) {
-            int[] startingPoint = dividedStack.pop();
-            int localWidth = Math.min(width - startingPoint[0], 64);
-            int localHeight = Math.min(height - startingPoint[1], 64);
+    public Runnable raytraceThreaded(int tileSize, int tileStart, int tileSkip) {
+        return () -> {
+            int tileCountX = (int) Math.ceil((double) width / tileSize);
+            int tileCountY = (int) Math.ceil((double) height / tileSize);
+            int tileCount = tileCountX * tileCountY;
 
-            raytrace(startingPoint[0], startingPoint[1], localWidth, localHeight);
-        }
-    }
+            for (int i = tileStart; i < tileCount; i += tileSkip) {
+                int tileX = i % tileCountX;
+                int tileY = i / tileCountX;
 
-    public void generateStack() {
-        dividedStack = new ArrayDeque<>();
-        for (int x = 0; x < width; x = x + 64) {
-            for (int y = 0; y < height; y = y + 64) {
-                dividedStack.push(new int[]{x, y});
+                int localX = tileX * tileSize;
+                int localY = tileY * tileSize;
+                int localWidth = Math.min(width - localX, 64);
+                int localHeight = Math.min(height - localY, 64);
+
+                raytrace(localX, localY, localWidth, localHeight);
             }
-        }
+        };
     }
-
 }

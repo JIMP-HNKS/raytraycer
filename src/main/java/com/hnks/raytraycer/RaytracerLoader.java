@@ -191,9 +191,11 @@ public class RaytracerLoader {
         }
 
         Scene scene = sceneBuilder.lights(lights).objects(objects).build();
-
         Camera camera = cameraBuilder.build();
 
-        return raytracerBuilder.scene(scene).camera(camera).build();
+        Raytracer raytracer = raytracerBuilder.scene(scene).camera(camera).build();
+        raytracer.createImage();
+
+        return raytracer;
     }
 }

@@ -17,7 +17,7 @@ public class Mirror implements Material {
 
     @Override
     public Vector shade(Scene scene, RayHit hit) {
-        if (scene.isRayDepthExceeded()) {
+        if (scene.isRayDepthExceeded(hit.ray())) {
             return new Vector(0, 0, 0);
         }
 
@@ -26,7 +26,7 @@ public class Mirror implements Material {
         Vector randomDirection = SamplerUtil.INSTANCE.nextUnitVectorHemi(hit.normal());
 
         Vector direction = Vector.lerp(roughness, reflectedDirection, randomDirection);
-        Ray reflected = new Ray(hit.position(), direction);
+        Ray reflected = new Ray(hit.position(), direction, hit.ray().depth() + 1);
 
         return Vector.multiply(scene.shade(reflected, true), color);
     }
