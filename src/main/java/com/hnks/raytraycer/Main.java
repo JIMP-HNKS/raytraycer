@@ -8,41 +8,50 @@ import javax.imageio.ImageIO;
 
 public class Main {
 
-    static final int THREADS_NUM = 4;
-
     public static void main(String[] args) {
-        String inputPathName = "scene.dat";
-        String outputPathName = "out.png";
+        String inputPathName = null;
+        String outputPathName = null;
+        int threadCount = 1;
 
-        if (args.length == 4) {
-            switch (args[0]) {
-                case "-i": inputPathName = args[1];
-                case "-o": outputPathName = args[1];
+        for (int i = 0; i < args.length; i += 2) {
+            if (i + 1 >= args.length) {
+                System.out.println("Value for argument not provided.");
+                System.exit(1);
             }
 
-            switch (args[2]) {
-                case "-i": inputPathName = args[3];
-                case "-o": outputPathName = args[3];
+            switch (args[i]) {
+                case "-i" -> {
+                    inputPathName = args[i + 1];
+                }
+                case "-o" -> {
+                    outputPathName = args[i + 1];
+                }
+                case "-n" -> {
+                    threadCount = Integer.parseInt(args[i + 1]);
+                }
             }
-        } else {
-            throw new IllegalArgumentException("Wrong parameters");
+        }
+
+        if (inputPathName == null || outputPathName == null) {
+            System.out.println("Both input scene file and output path must be provided.");
+            System.exit(1);
         }
 
         try {
             Raytracer raytracer = new RaytracerLoader(new File(inputPathName)).read();
-            Thread[] threads = new Thread[THREADS_NUM];
+            Thread[] threads = new Thread[threadCount];
 
             long start = System.nanoTime();
 
-            for (int i = 0; i < THREADS_NUM; i++) {
-                threads[i] = new Thread(raytracer.raytraceThreaded(64, i, THREADS_NUM));
+            for (int i = 0; i < threadCount; i++) {
+                threads[i] = new Thread(raytracer.raytraceThreaded(64, i, threadCount));
                 threads[i].setName("Thread: " + i);
                 threads[i].start();
 
                 System.out.println("Running " + threads[i].getName());
             }
 
-            for (int i = 0; i < THREADS_NUM; i++) {
+            for (int i = 0; i < threadCount; i++) {
                 threads[i].join();
             }
 
