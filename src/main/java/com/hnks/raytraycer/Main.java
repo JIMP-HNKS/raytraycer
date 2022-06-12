@@ -11,10 +11,29 @@ public class Main {
     static final int THREADS_NUM = 4;
 
     public static void main(String[] args) {
+        String inputPathName = "scene.dat";
+        String outputPathName = "out.png";
+
+        if (args.length == 4) {
+            System.out.println(args[0]);
+            System.out.println(args[1]);
+            System.out.println(args[2]);
+            System.out.println(args[3]);
+
+
+            switch (args[0]) {
+                case "-i": inputPathName = args[1];
+                case "-o": outputPathName = args[1];
+            }
+
+            switch (args[2]) {
+                case "-i": inputPathName = args[3];
+                case "-o": outputPathName = args[3];
+            }
+        }
 
         try {
-
-            Raytracer raytracer = new RaytracerLoader(new File("scene.dat")).read();
+            Raytracer raytracer = new RaytracerLoader(new File(inputPathName)).read();
             Thread[] threads = new Thread[THREADS_NUM];
 
             long start = System.nanoTime();
@@ -33,7 +52,7 @@ public class Main {
 
             System.out.println("Execution time: " + (double)(System.nanoTime() - start)/ 1000000000L);
 
-            ImageIO.write(raytracer.getImage(), "png", new File("out.png"));
+            ImageIO.write(raytracer.getImage(), "png", new File(outputPathName));
 
             System.out.println("Execution+save time: " + (double)(System.nanoTime() - start)/ 1000000000L);
 
