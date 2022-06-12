@@ -15,12 +15,6 @@ public class Main {
         String outputPathName = "out.png";
 
         if (args.length == 4) {
-            System.out.println(args[0]);
-            System.out.println(args[1]);
-            System.out.println(args[2]);
-            System.out.println(args[3]);
-
-
             switch (args[0]) {
                 case "-i": inputPathName = args[1];
                 case "-o": outputPathName = args[1];
@@ -30,6 +24,8 @@ public class Main {
                 case "-i": inputPathName = args[3];
                 case "-o": outputPathName = args[3];
             }
+        } else {
+            throw new IllegalArgumentException("Wrong parameters");
         }
 
         try {
